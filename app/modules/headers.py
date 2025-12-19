@@ -3,6 +3,7 @@ HTTP Security Headers Module
 Analizza la presenza e configurazione degli header di sicurezza HTTP
 """
 import requests
+import os
 from typing import Dict, Any, List
 from ..models.schemas import Finding
 
@@ -183,6 +184,13 @@ class HeadersScanner:
             "findings": findings,
             "metadata": metadata
         }
+
+    @staticmethod
+    def _get_bool_env(var_name: str, default: bool = False) -> bool:
+        value = os.getenv(var_name)
+        if value is None:
+            return default
+        return value.strip().lower() in {"1", "true", "yes", "on"}
     
     def _check_header_weakness(self, header: str, value: str) -> str:
         """Verifica se un header ha configurazione debole"""

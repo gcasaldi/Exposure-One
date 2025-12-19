@@ -39,6 +39,11 @@ async def scan_target(request: ScanRequest):
         result = scanner.scan(request.target)
         return result
     
+    except ValueError as ve:
+        raise HTTPException(
+            status_code=400,
+            detail=str(ve)
+        )
     except Exception as e:
         raise HTTPException(
             status_code=500,

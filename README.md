@@ -88,6 +88,11 @@ Exposure Score (0-100) basato su:
 - ✅ Nessun dato persistente
 - ✅ Solo analisi on-demand, stateless, non invasiva
 
+### Configurazione di sicurezza (runtime)
+- `ALLOW_ORIGINS` (default: `http://localhost:8000,http://127.0.0.1:8000`): lista di origin consentite per CORS
+- `ALLOW_INSECURE_HTTPS` (default: `false`): se `true` consente certificati non validi nel modulo headers (sconsigliato in produzione)
+- `ALLOW_PRIVATE_TARGETS` (default: `false`): se `true` permette la scansione di IP privati/loopback
+
 ## 🚀 Installazione e Uso
 
 ### Prerequisiti
@@ -125,6 +130,12 @@ curl -X POST http://localhost:8000/api/scan \
 curl -X POST http://localhost:8000/api/scan \
   -H "Content-Type: application/json" \
   -d '{"target": "1.2.3.4"}'
+```
+
+#### Uso da terminale (senza frontend)
+```bash
+python cli.py --target example.com           # output tabellare
+python cli.py --target example.com --format json  # output JSON completo
 ```
 
 ## 📁 Struttura Progetto

@@ -50,7 +50,16 @@ async function handleScan(e) {
         });
         
         if (!response.ok) {
-            throw new Error(`Errore HTTP: ${response.status}`);
+            let message = `Errore HTTP: ${response.status}`;
+            try {
+                const errorBody = await response.json();
+                if (errorBody?.detail) {
+                    message = errorBody.detail;
+                }
+            } catch (err) {
+                // ignore parse errors
+            }
+            throw new Error(message);
         }
         
         const data = await response.json();

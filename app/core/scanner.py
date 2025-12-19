@@ -4,6 +4,8 @@ Coordina l'esecuzione di tutti i moduli di scanning
 """
 import time
 import uuid
+import ipaddress
+import os
 from datetime import datetime
 from typing import List, Dict, Any
 from ..models.schemas import (
@@ -33,6 +35,7 @@ class Scanner:
         self.domain_scanner = DomainScanner()
         self.email_scanner = EmailSecurityScanner()
         self.risk_scorer = RiskScorer()
+        self.allow_private_targets = self._get_bool_env("ALLOW_PRIVATE_TARGETS", default=False)
     
     def scan(self, target: str) -> ScanResponse:
         """
@@ -44,6 +47,7 @@ class Scanner:
         Returns:
             ScanResponse con tutti i risultati
         """
+        self._assert_target_allowed(target)
         scan_id = str(uuid.uuid4())[:8]
         timestamp = datetime.utcnow().isoformat() + "Z"
         start_time = time.time()
@@ -223,3 +227,21 @@ class Scanner:
             findings_by_severity=findings_by_severity,
             execution_summary=execution_summary
         )
+
+    def _assert_target_allowed(self, target: str) -> None:
+        """Previene scansioni di IP privati/reserved a meno che esplicitamente permesso"""
+        try:
+            ip_obj = ipaddress.ip_address(target)
+        except ValueError:
+            # Non è un IP diretto, consentiamo (la risoluzione avverrà nei moduli)
+            return
+
+        if not self.allow_private_targets and (ip_obj.is_private or ip_obj.is_loopback or ip_obj.is_reserved):
+            raise ValueError("Target privato/non routable non consentito (configurare ALLOW_PRIVATE_TARGETS=true per abilitarlo)")
+
+    @staticmethod
+    def _get_bool_env(var_name: str, default: bool = False) -> bool:
+        value = os.getenv(var_name)
+        if value is None:
+            return default
+        return value.strip().lower() in {"1", "true", "yes", "on"}

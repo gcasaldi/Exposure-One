@@ -4,6 +4,8 @@ Exposure One - Data Models and Schemas
 from pydantic import BaseModel, Field, validator
 from typing import List, Optional, Dict, Any
 from enum import Enum
+import ipaddress
+import re
 
 
 class RiskLevel(str, Enum):
@@ -22,7 +24,21 @@ class ScanRequest(BaseModel):
     def validate_target(cls, v):
         if not v or len(v.strip()) == 0:
             raise ValueError("Target non può essere vuoto")
-        return v.strip()
+        value = v.strip()
+        # Consenti solo hostname o IP, evita URL completi e input con path/query
+        if '://' in value or '/' in value:
+            raise ValueError("Fornire solo dominio o IP, non un URL completo")
+        # IP valido
+        try:
+            ipaddress.ip_address(value)
+            return value
+        except ValueError:
+            pass
+        # Hostname RFC1123 base (no caratteri speciali, lunghezza limitata)
+        hostname_regex = re.compile(r"^(?=.{1,253}$)(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.(?!-)[A-Za-z0-9-]{1,63}(?<!-))*\.?$")
+        if not hostname_regex.match(value):
+            raise ValueError("Dominio non valido")
+        return value
 
 
 class Finding(BaseModel):
