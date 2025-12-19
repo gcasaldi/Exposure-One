@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exposure One - Attack Surface Discovery</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎯 Exposure One</h1>
+            <p class="subtitle">Attack Surface Discovery & Misconfiguration Assessment</p>
+        </header>
+
+        <!-- Scanner Form -->
+        <div class="scanner-form">
+            <form id="scanForm">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <label for="target">Dominio o IP da scansionare</label>
+                        <input 
+                            type="text" 
+                            id="target" 
+                            name="target" 
+                            placeholder="example.com o 1.2.3.4"
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn" id="scanBtn">
+                        🔍 Avvia Scansione
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Scansione in corso... Questo potrebbe richiedere alcuni secondi.</p>
+        </div>
+
+        <!-- Results Container -->
+        <div id="results">
+            <!-- View Switcher -->
+            <div class="view-switcher">
+                <button class="view-btn active" id="executiveBtn">
+                    👔 Executive View
+                </button>
+                <button class="view-btn" id="technicalBtn">
+                    🔧 Technical View
+                </button>
+            </div>
+
+            <!-- Executive View -->
+            <div class="executive-view active" id="executiveView">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Technical View -->
+            <div class="technical-view" id="technicalView">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                <strong>Exposure One</strong> v1.0.0 | 
+                Attack Surface Discovery & Misconfiguration Assessment
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                🔒 Nessun dato persistente • Analisi stateless • Non invasiva
+            </p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
